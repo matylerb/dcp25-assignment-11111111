@@ -1,7 +1,18 @@
 import os
 import re
 import pprint
-import pandas as pd
+import pandas as pd#
+
+def load(filepath):
+    try:
+        with open(filepath, 'r', encoding='latin1') as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"ERROR: File not found at {filepath}")
+        return None
+    except Exception as e:
+        print(f"ERROR: An error occurred while reading {filepath}: {e}")
+        return None
 
 def parse_abc_data(abc_text):
     if not abc_text:
@@ -36,28 +47,13 @@ def _parse_single_tune(tune_lines):
     tune_dict['music'] = '\n'.join(music_notation)
     return tune_dict
 
-def load(filepath):
-    try:
-        with open(filepath, 'r', encoding='latin1') as f:
-            return f.read()
-    except FileNotFoundError:
-        print(f"ERROR: File not found at {filepath}")
-        return None
-    except Exception as e:
-        print(f"ERROR: An error occurred while reading {filepath}: {e}")
-        return None
-
 def process_all_abc_files(base_folder):
     all_tunes = []
-    file_count = 0
-
-    print(f"Starting to search for .abc files in '{base_folder}'...")
-
+    
     for dirpath, _, filenames in os.walk(base_folder):
         for filename in filenames:
             if filename.endswith('.abc'):
                 file_path = os.path.join(dirpath, filename)
-                print(f"Processing file: {filename}")
                 
                 abc_text = load(file_path)
                 
@@ -68,10 +64,6 @@ def process_all_abc_files(base_folder):
                         tune['source_file'] = filename
                     
                     all_tunes.extend(tunes_from_file)
-                    file_count += 1
-
-    print(f"\nProcessing complete.")
-    print(f"Found and parsed {len(all_tunes)} tunes from {file_count} files.")
     return all_tunes
 
 if __name__ == "__main__":
@@ -79,23 +71,17 @@ if __name__ == "__main__":
     
     all_parsed_data = process_all_abc_files(abc_root_folder)
     
-    if all_parsed_data:
-        print("\n---First tune parsed ---")
-        pprint.pprint(all_parsed_data[0])
-        
-        print("\n--- Last tune parsed ---")
-        pprint.pprint(all_parsed_data[-1])
-        
-        print("\n--- Converting to Pandas DataFrame ---")
-        df = pd.DataFrame(all_parsed_data)
-        
-        print(df.head())
-        
-        print("\nDataFrame Info:")
-        df.info()
+   # Assuming you have run the parsing and have the 'all_parsed_data' list
+if all_parsed_data:
+    
 
-        print("\n--- Example Analysis: Most Common Keys ---")
-        if 'K' in df.columns:
-            print(df['K'].value_counts().head(10))
-        else:
-            print("No 'K' (Key) field found in the data.")
+    num_tunes_to_print = 4400
+    print(f"\n--- Printing the first {num_tunes_to_print} parsed tunes as an example ---")
+    
+    for index, tune in enumerate(all_parsed_data[:num_tunes_to_print]):
+ 
+        source_file = tune.get('source_file', 'N/A') 
+        
+        print(f"\n--- TUNE #{index + 1} (from file: {source_file}) ---")
+        pprint.pprint(tune)
+
