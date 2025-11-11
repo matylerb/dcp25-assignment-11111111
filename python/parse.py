@@ -76,13 +76,11 @@ def setup_database(db_filename, base_folder):
 
     df = pd.DataFrame(all_parsed_data)
     
-    # Best practice: Convert list-like columns to JSON strings for storage.
     for col in df.columns:
         if df[col].apply(lambda x: isinstance(x, list)).any():
             print(f"Converting list-like column '{col}' to JSON strings.")
             df[col] = df[col].apply(json.dumps)
             
-    # Save the data to SQLite
     table_name = 'tunes'
     conn = sqlite3.connect(db_filename)
     df.to_sql(table_name, conn, if_exists='replace', index=False)
