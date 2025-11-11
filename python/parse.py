@@ -9,10 +9,10 @@ def load(filepath):
         with open(filepath, 'r', encoding='latin1') as f:
             return f.read()
     except FileNotFoundError:
-        print(f"ERROR: File not found at {filepath}")
+        print(f"File not found at {filepath}")
         return None
     except Exception as e:
-        print(f"ERROR: An error occurred while reading {filepath}: {e}")
+        print(f"error occurred while reading {filepath}: {e}")
         return None
 
 def parse_abc_data(abc_text):
@@ -46,7 +46,6 @@ def _parse_single_tune(tune_lines):
 
 def process_all_abc_files(base_folder):
     all_tunes = []
-    print(f"Starting to search for .abc files in '{base_folder}'...")
     for dirpath, _, filenames in os.walk(base_folder):
         folder_name = os.path.basename(dirpath)
         if not folder_name.isdigit():
@@ -70,23 +69,16 @@ def setup_database(db_filename, base_folder):
 
     all_parsed_data = process_all_abc_files(base_folder)
     
-    if not all_parsed_data:
-        print("No tunes were parsed. Database will not be created.")
-        return
-
     df = pd.DataFrame(all_parsed_data)
     
     for col in df.columns:
         if df[col].apply(lambda x: isinstance(x, list)).any():
-            print(f"Converting list-like column '{col}' to JSON strings.")
             df[col] = df[col].apply(json.dumps)
             
     table_name = 'tunes'
     conn = sqlite3.connect(db_filename)
     df.to_sql(table_name, conn, if_exists='replace', index=False)
     conn.close()
-    
-    print(f"\nDatabase setup complete. All data saved to '{db_filename}' in table '{table_name}'.")
 
 if __name__ == "__main__":
     abc_root_folder = '../abc_books'
