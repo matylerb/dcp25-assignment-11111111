@@ -1,12 +1,8 @@
 import pandas as pd
-
-
-data = None
+import os 
 
 def load(word):
-    global data
-
-
+    
     try:
         with open(word, 'r', encoding='latin1') as f:
             text = f.read()
@@ -16,4 +12,12 @@ def load(word):
         print("Data not loaded")
         return None
     
-load(/abc_books)
+def parse():
+
+    text = load('abc_books/1/hnair0.abc')
+    for word in text.split():
+        cleaned_word = ''.join(char for char in word if char.isalnum())
+        print(cleaned_word)
+
+load('../abc_books/1/hnair0.abc')
+parse()
