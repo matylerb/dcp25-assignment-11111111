@@ -21,22 +21,36 @@ def get_tunes():
     db_filename = 'tunes.db'
     conn = sqlite3.connect(db_filename)
     query = "SELECT * FROM tunes"
-    
-    filters = []
     params = []
-    
-    for key, value in request.args.items():
-        filters.append(f"{key} = ?")
-        params.append(value)
-    
-    if filters:
-        query += " WHERE " + " AND ".join(filters)
-    
-    df = pd.read_sql_query(query, conn, params=params)
-    conn.close()
-    
-    result = df.to_dict(orient='records')
+
+    search_params = request.args('q')
+
+    if search_params:
+        query += " WHERE music LIKE ?"
+        params.append(f"%{search_params}%")
+
+        allowed_filters = ['K', 'R', 'M', 'book_number']
+
+        for key in allowed_filters:
+            value = request.args.get(key)
+            if value:
+                query += f" AND {key} = ?"
+                params.append(value)
+
+        query += " LIMIT 50"
+
+        df = pd.read_sql_query(query, conn, params=params)
+        conn.close()
+
+        result = df.to_dict(orient='records')
+        for row in result:
+            try:
+                if isinstance(row.get('T'), str) and row['T'].startswith('['):
+                    row['T'] = json.loads(row['T'])
+            except:
+                pass
     return jsonify(result)
+
 
 def load(filepath):
     try:
