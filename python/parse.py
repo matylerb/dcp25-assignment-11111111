@@ -134,3 +134,5 @@ if __name__ == "__main__":
     
     
     setup_database(database_file, abc_root_folder)
+
+    app.run(debug=True, port=5000)
