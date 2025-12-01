@@ -3,6 +3,40 @@ import re
 import pandas as pd
 import json
 import sqlite3
+from flask import Flask, jsonify, request, send_file
+
+app = Flask(__name__)
+
+
+@app.route('/')
+
+def index():
+    try:
+        return send_file('index.html')
+    except Exception as e:
+        return str(e), 500
+    
+@app.route('/tunes', methods=['GET'])
+def get_tunes():
+    db_filename = 'tunes.db'
+    conn = sqlite3.connect(db_filename)
+    query = "SELECT * FROM tunes"
+    
+    filters = []
+    params = []
+    
+    for key, value in request.args.items():
+        filters.append(f"{key} = ?")
+        params.append(value)
+    
+    if filters:
+        query += " WHERE " + " AND ".join(filters)
+    
+    df = pd.read_sql_query(query, conn, params=params)
+    conn.close()
+    
+    result = df.to_dict(orient='records')
+    return jsonify(result)
 
 def load(filepath):
     try:
