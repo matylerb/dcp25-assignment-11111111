@@ -74,16 +74,25 @@ def process_all_abc_files(base_folder):
     return all_tunes
 
 def setup_database(db_filename, base_folder):
-
     all_parsed_data = process_all_abc_files(base_folder)
     
     df = pd.DataFrame(all_parsed_data)
+
+    # convert lists to json so sqlite can store them
     for col in df.columns:
         if df[col].apply(lambda x: isinstance(x, list)).any():
             df[col] = df[col].apply(json.dumps)
-            
-    table_name = 'tunes'
+    
+    # open sqlite connection
     conn = sqlite3.connect(db_filename)
+    
+    # write dataframe to sqlite
+    df.to_sql('tunes', conn, if_exists='replace', index=False)
+    
+    # close connection
+    conn.close()
+    
+    print(f"database created at {db_filename} with {len(df)} tunes")
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
