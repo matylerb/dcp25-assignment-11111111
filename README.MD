@@ -2,7 +2,7 @@
 
 - [Assignment Brief](assignment.md)
 
-Name:
+Name: Tyler Brady
 
 Student Number: 
 
@@ -18,13 +18,15 @@ Student Number:
 
 | Files | Source |
 |-----------|-----------|
-| main.py | Self written |
-| test.py | Modified from [reference]() |
-| test.py | From [reference]() |
+| parse_simple.py | Self written |
+| parse.py | Modified using gen AI |
+| ui_simple.py | Self Written |
+| ui.py | Modified using gen AI |
 
 # References
-* Item 1
-* Item 2
+* Stackoverflow
+* py5 Documentation
+* ABC Documentation
 
 # What I am most proud of in the assignment
 
@@ -32,25 +34,7 @@ Bla bla bla
 
 # What I learned
 
-Bla bla bla
-
-## Below is how to use Markdown. You can delete this:
-
-## This is how to markdown text:
-
-This is *emphasis*
-
-This is a bulleted list
-
-- Item
-- Item
-
-This is a numbered list
-
-1. Item
-1. Item
-
-This is a [hyperlink](http://bryanduggan.org)
+How to parse through data and
 
 # Headings
 ## Headings
